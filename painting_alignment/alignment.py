@@ -119,27 +119,27 @@ def show_plan(plan):
     return canvas
 
 
-def compute_plan(deviance, angle_deviance):
-    if np.linalg.norm(deviance) < 15:
+def compute_plan(deviance, angle_deviance, corner_matched, edge_matched):
+    if (np.linalg.norm(deviance) < 10 and not corner_matched) or (np.linalg.norm(deviance) < 15 and corner_matched):
         # adjust angle
-        if abs(angle_deviance) < 1:
-            return 'Matched'
+        if (abs(angle_deviance) < 1 and not edge_matched) or (abs(angle_deviance) < 5 and edge_matched):
+            return 'Matched', True, True
         else:
             if angle_deviance < 0:
-                return 'Rotate Left'
+                return 'Rotate Left', True, False
             else:
-                return 'Rotate Right'
+                return 'Rotate Right', True, False
     else: 
         if abs(deviance[0]) > abs(deviance[1]):
             if deviance[0] > 0:
-                return 'Move Right'
+                return 'Move Right', False, False
             else:
-                return 'Move Left'
+                return 'Move Left', False, False
         else:
             if deviance[1] > 0:
-                return 'Move Down'
+                return 'Move Down', False, False
             else:
-                return 'Move Up'
+                return 'Move Up', False, False
 
 
 
@@ -164,6 +164,7 @@ def main():
     old_left, old_right = None, None
     alpha = 0.15
     plan = None
+    corner_matched, edge_matched = False, False
     while not end:
         ret, frame = cap.read()
         if not ret:
@@ -196,7 +197,7 @@ def main():
                 # Start calculations
                 if start_calc and (ix != -1 and iy != -1 and ex != -1 and ey != -1):
                     deviance, angle_deviance = calculate_deviance(upper_left, current_angle)
-                    plan = compute_plan(deviance, angle_deviance)
+                    plan, corner_matched, edge_matched = compute_plan(deviance, angle_deviance, corner_matched, edge_matched)
                     print("deviance: ", deviance, "angle_deviance: ", angle_deviance, "plan: ", plan)
         # Visualizations
         if ix != -1 and iy != -1 and ex != -1 and ey != -1:
