@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 canvas = np.ones((200, 200, 3), dtype = "uint8") * 255
-icon = cv2.imread('rotate.png')
+icon = cv2.imread('../object_detection/listening.png')
 h, w = icon.shape[:2]
 icon = icon[:, (w - h)//2: h + (w - h)//2, :]
 icon = cv2.resize(icon, (100, 100))
@@ -14,8 +14,8 @@ icon = cv2.resize(icon, (100, 100))
 # cv2.putText(canvas, 'Matching Corners', (10,180), font, 0.4, (0, 0, 255), 1, cv2.LINE_AA)
 # icon = cv2.resize(icon, (100, 100))
 # canvas[50:150, 50:150, :] = icon
-icon = cv2.flip(icon, 1)
-cv2.imwrite('counter-clockwise.png', icon)
+# icon = cv2.flip(icon, 1)
+cv2.imwrite('listening.png', icon)
 
 cv2.imshow('canvas', icon)
 cv2.waitKey(0)

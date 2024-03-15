@@ -18,9 +18,17 @@ class GripPipeline:
 
         self.resize_image_output = None
 
-        self.__blur_input = self.resize_image_output
+        self.__rgb_threshold_input = self.resize_image_output
+        self.__rgb_threshold_red = [0.0, 255.0]
+        self.__rgb_threshold_green = [175.93890395013509, 255.0]
+        self.__rgb_threshold_blue = [162.10793125500055, 231.7918144069841]
+
+        self.rgb_threshold_output = None
+
+        self.__blur_input = self.rgb_threshold_output
         self.__blur_type = BlurType.Median_Filter
-        self.__blur_radius = 3.0
+        self.__blur_radius = 0.0
+
         self.blur_output = None
 
         self.__cv_canny_image = self.blur_output
@@ -36,7 +44,7 @@ class GripPipeline:
         self.find_lines_output = None
 
         self.__filter_lines_lines = self.find_lines_output
-        self.__filter_lines_min_length = 50.0
+        self.__filter_lines_min_length = 20.0
         self.__filter_lines_angle = [0.0, 360.0]
 
         self.filter_lines_output = None
@@ -47,11 +55,15 @@ class GripPipeline:
         Runs the pipeline and sets all outputs to new values.
         """
         # Step Resize_Image0:
-        self.__resize_image_input = source0
-        (self.resize_image_output) = self.__resize_image(self.__resize_image_input, self.__resize_image_width, self.__resize_image_height, self.__resize_image_interpolation)
+        # self.__resize_image_input = source0
+        # (self.resize_image_output) = self.__resize_image(self.__resize_image_input, self.__resize_image_width, self.__resize_image_height, self.__resize_image_interpolation)
+
+        # Step RGB_Threshold0:
+        self.__rgb_threshold_input = source0
+        (self.rgb_threshold_output) = self.__rgb_threshold(self.__rgb_threshold_input, self.__rgb_threshold_red, self.__rgb_threshold_green, self.__rgb_threshold_blue)
 
         # Step Blur0:
-        self.__blur_input = self.resize_image_output
+        self.__blur_input = self.rgb_threshold_output
         (self.blur_output) = self.__blur(self.__blur_input, self.__blur_type, self.__blur_radius)
 
         # Step CV_Canny0:
@@ -79,6 +91,20 @@ class GripPipeline:
             A numpy.ndarray of the new size.
         """
         return cv2.resize(input, ((int)(width), (int)(height)), 0, 0, interpolation)
+
+    @staticmethod
+    def __rgb_threshold(input, red, green, blue):
+        """Segment an image based on color ranges.
+        Args:
+            input: A BGR numpy.ndarray.
+            red: A list of two numbers the are the min and max red.
+            green: A list of two numbers the are the min and max green.
+            blue: A list of two numbers the are the min and max blue.
+        Returns:
+            A black and white numpy.ndarray.
+        """
+        out = cv2.cvtColor(input, cv2.COLOR_BGR2RGB)
+        return cv2.inRange(out, (red[0], green[0], blue[0]),  (red[1], green[1], blue[1]))
 
     @staticmethod
     def __blur(src, type, radius):

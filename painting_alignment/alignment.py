@@ -45,10 +45,10 @@ def get_top_corners(frame):
 
         # Process the points
         # remove outliers
-        pts = pts[pts[:, 0] > pts_center[0] - 3 * pts_std[0]]
-        pts = pts[pts[:, 0] < pts_center[0] + 3 * pts_std[0]]
-        pts = pts[pts[:, 1] > pts_center[1] - 3 * pts_std[1]]
-        pts = pts[pts[:, 1] < pts_center[1] + 3 * pts_std[1]]
+        pts = pts[pts[:, 0] > pts_center[0] - 2 * pts_std[0]]
+        pts = pts[pts[:, 0] < pts_center[0] + 2 * pts_std[0]]
+        pts = pts[pts[:, 1] > pts_center[1] - 2 * pts_std[1]]
+        pts = pts[pts[:, 1] < pts_center[1] + 2 * pts_std[1]]
 
         # Create Convex hull and find top left and bottom right of convex hull
         hull = ConvexHull(pts)
@@ -120,9 +120,11 @@ def show_plan(plan):
 
 
 def compute_plan(deviance, angle_deviance, corner_matched, edge_matched):
-    if (np.linalg.norm(deviance) < 10 and not corner_matched) or (np.linalg.norm(deviance) < 15 and corner_matched):
+    # if (np.linalg.norm(deviance) < 10 and not corner_matched) or (np.linalg.norm(deviance) < 15 and corner_matched):
+    if (np.linalg.norm(deviance) < 15):
         # adjust angle
-        if (abs(angle_deviance) < 1 and not edge_matched) or (abs(angle_deviance) < 5 and edge_matched):
+        # if (abs(angle_deviance) < 1 and not edge_matched) or (abs(angle_deviance) < 5 and edge_matched):
+        if (abs(angle_deviance) < 2.5):
             return 'Matched', True, True
         else:
             if angle_deviance < 0:
@@ -146,7 +148,7 @@ def compute_plan(deviance, angle_deviance, corner_matched, edge_matched):
 def main():
     # Use the index appropriate for your external webcam (commonly 1 for the first external one)
     cap = cv2.VideoCapture() 
-    cap.open(0)
+    cap.open(1)
 
     if not cap.isOpened():
         print("Error: Could not open video capture device.")
@@ -170,8 +172,11 @@ def main():
         if not ret:
             print("Error: Could not read frame.")
             break
-        
-        frame = cv2.resize(frame, (640, 480))
+        outer_crop_px = 50
+        h, w = 640, 480
+        frame = cv2.resize(frame, (640, 480))[outer_crop_px:w - outer_crop_px, outer_crop_px:h - outer_crop_px, :]
+        # h, w = frame.shape[:2]
+        # frame = frame[100: h-100, 100:w - 100, :].copy()
         
         # gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # matching upper left
