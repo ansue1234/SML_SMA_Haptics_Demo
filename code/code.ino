@@ -20,7 +20,7 @@ const int sma_pins[NUM_ACT] = {5, 16, 17, 18};  // w, a, s, d (up, left, down, r
 const float sma_duty_cycles[NUM_ACT] = {100.0, 100.0, 100.0, 100.0};
 const float sma_resistances[NUM_ACT] = {3.3, 2.9, 3.1, 3.3};
 const int act_time = 100; // in millisec
-
+const int cool_down_time = 1000; // in millisec
 // Power configs
 const float MAX_BAT_VOLTAGE = 4.2;
 const float target_current = 0.8;
@@ -88,30 +88,50 @@ void trigger_actuator() {
   Serial.println("-----------------------Triggered----------------------");
   Serial.println("Starting Activation...");
   char action_val = action.load();
-  if (action_val == 'u') {
+  if (action_val == 'w') {
       ledcWrite(sma_channels[0], compute_duty_value(sma_duty_cycles[0], sma_resistances[0]));
       Serial.println("up");
-  } else if (action_val == 'l') {
+      delay(act_time);
+  } else if (action_val == 'a') {
       ledcWrite(sma_channels[1], compute_duty_value(sma_duty_cycles[1], sma_resistances[1]));
       Serial.println("left");
-  } else if (action_val == 'd') {
+      delay(act_time);
+  } else if (action_val == 's') {
       ledcWrite(sma_channels[2], compute_duty_value(sma_duty_cycles[2], sma_resistances[2]));
       Serial.println("down");
-  } else if (action_val == 'r') {
+      delay(act_time);
+  } else if (action_val == 'd') {
       ledcWrite(sma_channels[3], compute_duty_value(sma_duty_cycles[3], sma_resistances[3]));
       Serial.println("right");
+      delay(act_time);
+  } else if (action_val == 'j') {
+      ledcWrite(sma_channels[2], compute_duty_value(sma_duty_cycles[2], sma_resistances[2]));
+      delay(act_time);
+      ledcWrite(sma_channels[2], 0);
+
+      ledcWrite(sma_channels[3], compute_duty_value(sma_duty_cycles[3], sma_resistances[3]));
+      delay(act_time);
+      ledcWrite(sma_channels[3], 0);
+  } else if (action_val == 'k') {
+      ledcWrite(sma_channels[1], compute_duty_value(sma_duty_cycles[1], sma_resistances[1]));
+      delay(act_time);
+      ledcWrite(sma_channels[1], 0);
+      
+      ledcWrite(sma_channels[0], compute_duty_value(sma_duty_cycles[0], sma_resistances[0]));
+      delay(act_time);
+      ledcWrite(sma_channels[0], 0);
   } else {
       for (int i = 0; i < NUM_ACT; i++) {
           int raw_duty_cycle_val = compute_duty_value(sma_duty_cycles[i], sma_resistances[i]);
           ledcWrite(sma_channels[i], raw_duty_cycle_val);
       }
       Serial.println("all");
+      delay(act_time);
   }
-
-  delay(act_time);
   for (int j = 0; j < NUM_ACT; j++) {
     ledcWrite(sma_channels[j], 0);
   }
+  delay(cool_down_time);
   Serial.println("Ending Activation...");
 }
 
