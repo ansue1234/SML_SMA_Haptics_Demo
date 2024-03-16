@@ -21,6 +21,7 @@ const float sma_duty_cycles[NUM_ACT] = {100.0, 100.0, 100.0, 100.0};
 const float sma_resistances[NUM_ACT] = {3.3, 2.9, 3.1, 3.3};
 const int act_time = 100; // in millisec
 const int cool_down_time = 1000; // in millisec
+const int num_cycles = 1;
 // Power configs
 const float MAX_BAT_VOLTAGE = 4.2;
 const float target_current = 0.8;
@@ -105,6 +106,7 @@ void trigger_actuator() {
       Serial.println("right");
       delay(act_time);
   } else if (action_val == 'j') {
+    for (int n = 0; n < num_cycles; n++) {
       ledcWrite(sma_channels[2], compute_duty_value(sma_duty_cycles[2], sma_resistances[2]));
       delay(act_time);
       ledcWrite(sma_channels[2], 0);
@@ -112,7 +114,17 @@ void trigger_actuator() {
       ledcWrite(sma_channels[3], compute_duty_value(sma_duty_cycles[3], sma_resistances[3]));
       delay(act_time);
       ledcWrite(sma_channels[3], 0);
+
+      ledcWrite(sma_channels[0], compute_duty_value(sma_duty_cycles[0], sma_resistances[0]));
+      delay(act_time);
+      ledcWrite(sma_channels[0], 0);
+
+      ledcWrite(sma_channels[1], compute_duty_value(sma_duty_cycles[1], sma_resistances[1]));
+      delay(act_time);
+      ledcWrite(sma_channels[1], 0);
+    } 
   } else if (action_val == 'k') {
+    for (int m = 0; m < num_cycles; m++) {
       ledcWrite(sma_channels[1], compute_duty_value(sma_duty_cycles[1], sma_resistances[1]));
       delay(act_time);
       ledcWrite(sma_channels[1], 0);
@@ -120,6 +132,15 @@ void trigger_actuator() {
       ledcWrite(sma_channels[0], compute_duty_value(sma_duty_cycles[0], sma_resistances[0]));
       delay(act_time);
       ledcWrite(sma_channels[0], 0);
+
+      ledcWrite(sma_channels[3], compute_duty_value(sma_duty_cycles[3], sma_resistances[3]));
+      delay(act_time);
+      ledcWrite(sma_channels[3], 0);
+
+      ledcWrite(sma_channels[2], compute_duty_value(sma_duty_cycles[2], sma_resistances[2]));
+      delay(act_time);
+      ledcWrite(sma_channels[2], 0);
+    }
   } else {
       for (int i = 0; i < NUM_ACT; i++) {
           int raw_duty_cycle_val = compute_duty_value(sma_duty_cycles[i], sma_resistances[i]);
