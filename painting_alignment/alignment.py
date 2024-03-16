@@ -3,10 +3,13 @@ import keyboard
 import numpy as np
 from grip import GripPipeline
 from scipy.spatial import ConvexHull
+from ..code.client import Client
 
 drawing = False # True if mouse is pressed
 ix, iy = -1, -1 # Initial x and y location
 ex, ey = -1, -1 # Ending x and y location
+client = Client(url_1='http://192.168.43.176:80/receiveData', record=True, record_file='./command_record/commands.csv')
+
 
 def draw_rectangle(event, x, y, flags, param):
     global ix, iy, drawing, ex, ey
@@ -81,27 +84,35 @@ def calculate_deviance(current_pt, current_angle):
     return deviance, angle_deviance
 
 def show_plan(plan):
+    global client
     canvas = np.ones((200, 200, 3), dtype = "uint8") * 255
     if plan == 'Rotate Right':
         icon = cv2.imread('clockwise.png')
+        client.send_post('k')
         stage = 'Matching Edge'
     elif plan == 'Rotate Left':
         icon = cv2.imread('counter-clockwise.png')
+        client.send_post('j')
         stage = 'Matching Edge'
     elif plan == 'Move Up':
         icon = cv2.imread('up.png')
+        client.send_post('w')
         stage = 'Matching Corner'
     elif plan == 'Move Down':
         icon = cv2.imread('down.png')
+        client.send_post('s')
         stage = 'Matching Corner'
     elif plan == 'Move Left':
         icon = cv2.imread('left.png')
+        client.send_post('a')
         stage = 'Matching Corner'
     elif plan == 'Move Right':
         icon = cv2.imread('right.png')
+        client.send_post('d')
         stage = 'Matching Corner'
     elif plan == 'Matched':
         icon = cv2.imread('smiley.png')
+        client.send_post('r')
         plan = 'No Action'
         stage = 'Matched'
     else:
