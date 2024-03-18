@@ -17,10 +17,10 @@ std::atomic<char> action{'0'};
 // SMA actuator configs
 const int NUM_ACT = 4;
 const int sma_pins[NUM_ACT] = {5, 16, 17, 18};  // w, a, s, d (up, left, down, right)
-const float sma_duty_cycles[NUM_ACT] = {100.0, 100.0, 100.0, 100.0};
-const float sma_resistances[NUM_ACT] = {3.3, 2.9, 3.1, 3.3};
+const float sma_duty_cycles[NUM_ACT] = {60.0, 60.0, 60.0, 60.0};
+const float sma_resistances[NUM_ACT] = {3.3, 3.0, 3.1, 3.3};
 const int act_time = 100; // in millisec
-const int cool_down_time = 1000; // in millisec
+const int cool_down_time = 5000; // in millisec
 const int num_cycles = 1;
 // Power configs
 const float MAX_BAT_VOLTAGE = 4.2;
@@ -177,8 +177,8 @@ int compute_duty_value(float percentage, float r) {
 float check_bat_level() {
   float analogVolts = analogReadMilliVolts(bat_monitor_pin)/1000.0 * 2.0; // Monitor circuit is a voltage divider by 2
 //    float analogVolts = analogRead(bat_monitor_pin); // Monitor circuit is a voltage divider by 2
-  Serial.println("Bat Volts");
-  Serial.println(analogVolts);
+//  Serial.println("Bat Volts");
+//  Serial.println(analogVolts);
   if (analogVolts < MAX_BAT_VOLTAGE * 0.83) {
     digitalWrite(bat_volt_indicator, HIGH);
   } else {

@@ -3,12 +3,14 @@ import keyboard
 import numpy as np
 from grip import GripPipeline
 from scipy.spatial import ConvexHull
-from ..code.client import Client
+from client import Client
 
 drawing = False # True if mouse is pressed
 ix, iy = -1, -1 # Initial x and y location
 ex, ey = -1, -1 # Ending x and y location
-client = Client(url_1='http://192.168.43.176:80/receiveData', record=True, record_file='./command_record/commands.csv')
+ip = '192.168.43.176'
+camera = 1
+client = Client(url_1='http://' + ip + ':80/receiveData', record=True, record_file='./command_record/commands.csv')
 
 
 def draw_rectangle(event, x, y, flags, param):
@@ -132,10 +134,10 @@ def show_plan(plan):
 
 def compute_plan(deviance, angle_deviance, corner_matched, edge_matched):
     # if (np.linalg.norm(deviance) < 10 and not corner_matched) or (np.linalg.norm(deviance) < 15 and corner_matched):
-    if (np.linalg.norm(deviance) < 15):
+    if (np.linalg.norm(deviance) < 20):
         # adjust angle
         # if (abs(angle_deviance) < 1 and not edge_matched) or (abs(angle_deviance) < 5 and edge_matched):
-        if (abs(angle_deviance) < 2.5):
+        if (abs(angle_deviance) < 3):
             return 'Matched', True, True
         else:
             if angle_deviance < 0:
@@ -159,7 +161,7 @@ def compute_plan(deviance, angle_deviance, corner_matched, edge_matched):
 def main():
     # Use the index appropriate for your external webcam (commonly 1 for the first external one)
     cap = cv2.VideoCapture() 
-    cap.open(1)
+    cap.open(camera)
 
     if not cap.isOpened():
         print("Error: Could not open video capture device.")
@@ -207,8 +209,8 @@ def main():
                 upper_right = np.int32(upper_right)
                 upper_left = np.int32(upper_left)
                 cv2.line(frame, tuple(upper_left), tuple(upper_right), (255, 0, 0), 2)
-                cv2.circle(frame, tuple(upper_left), 10, (0, 0, 255), -1)
-                cv2.circle(frame, tuple(upper_right), 10, (0, 0, 255), -1)
+                cv2.circle(frame, tuple(upper_left), 15, (0, 0, 255), -1)
+                cv2.circle(frame, tuple(upper_right), 15, (0, 0, 255), -1)
                 # cv2.circle(frame, (int(edge_center[0]), int(edge_center[1])), 10, (0, 0, 255), -1)
                 # Start calculations
                 if start_calc and (ix != -1 and iy != -1 and ex != -1 and ey != -1):

@@ -7,12 +7,14 @@ from record import AudioProcessor
 import numpy as np
 import pyttsx3
 
-from ..code.client import Client
+from client import Client
+ip = '192.168.43.176'
+camera = 1
 
 model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
 detector = HandDetector(staticMode=False, maxHands=1, modelComplexity=1, detectionCon=0.5, minTrackCon=0.5)
 engine = pyttsx3.init()
-client = Client(url_1='http://192.168.43.176:80/receiveData', record_file='./command_record/command_out.csv', record=True)
+client = Client(url_1='http://'+ip+':80/receiveData', record_file='./command_record/command_out.csv', record=True)
 
 def get_object_stats(frame, df_result, class_name, object_center=None):
     # object_center = None
@@ -115,7 +117,7 @@ def main():
                          'teddy bear']
     
     cap = cv2.VideoCapture() 
-    cap.open(1)
+    cap.open(camera)
     if not cap.isOpened():
         print("Error: Could not open video capture device.")
         return

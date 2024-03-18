@@ -2,7 +2,9 @@ import requests
 from pynput.keyboard import Key, Listener
 
 # The URL where you want to send the POST requests
-url = 'http://192.168.43.176:80/receiveData'
+ip = '192.168.43.176'
+url = 'http://' + ip + ':80/receiveData'
+# url ='http://localhost:80'
 
 # This function sends the HTTP POST request with the specified data
 def send_post(data):
@@ -34,5 +36,6 @@ def on_press(key):
             send_post('r') # orthogonal stop
 
 # Starting the listener to monitor keyboard presses
+print('Starting keyboard listener ...')
 with Listener(on_press=on_press) as listener:
     listener.join()
