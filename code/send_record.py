@@ -4,7 +4,7 @@ import time
 
 ip = '192.168.43.176'
 url = 'http://' + ip + ':80/receiveData'
-fname = './command_record/command_out.csv'
+fname = '../painting_alignment/command_record/commands_ painting.csv'
 # url = 'http://localhost:80'
 client = Client(url)
 

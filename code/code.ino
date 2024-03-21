@@ -17,8 +17,8 @@ std::atomic<char> action{'0'};
 // SMA actuator configs
 const int NUM_ACT = 4;
 const int sma_pins[NUM_ACT] = {5, 16, 17, 18};  // w, a, s, d (up, left, down, right)
-const float sma_duty_cycles[NUM_ACT] = {60.0, 60.0, 60.0, 60.0};
-const float sma_resistances[NUM_ACT] = {3.3, 3.0, 3.1, 3.3};
+const float sma_duty_cycles[NUM_ACT] = {100.0, 100.0, 100.0, 100.0};
+const float sma_resistances[NUM_ACT] = {3.0, 3.0, 3.0, 3.0};
 const int act_time = 100; // in millisec
 const int cool_down_time = 5000; // in millisec
 const int num_cycles = 1;
@@ -143,11 +143,11 @@ void trigger_actuator() {
     }
   } else {
       for (int i = 0; i < NUM_ACT; i++) {
-          int raw_duty_cycle_val = compute_duty_value(sma_duty_cycles[i], sma_resistances[i]);
+          int raw_duty_cycle_val = compute_duty_value(100.0, 3.1);
           ledcWrite(sma_channels[i], raw_duty_cycle_val);
       }
       Serial.println("all");
-      delay(act_time);
+      delay(300);
   }
   for (int j = 0; j < NUM_ACT; j++) {
     ledcWrite(sma_channels[j], 0);
