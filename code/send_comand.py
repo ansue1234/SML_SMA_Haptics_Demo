@@ -2,7 +2,8 @@ import requests
 from pynput.keyboard import Key, Listener
 
 # The URL where you want to send the POST requests
-ip = '192.168.43.176'
+# ip = '192.168.43.176'
+ip = '172.20.10.7'
 # ip = '192.168.43.42'
 url = 'http://' + ip + ':80/receiveData'
 # url ='http://localhost:80'

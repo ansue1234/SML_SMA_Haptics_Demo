@@ -4,8 +4,8 @@
 #include <atomic>
 
 // Network Setup
-const char *ssid = "ansue";
-const char *password = "a98bd13deb90";
+const char *ssid = "BeomchaniPhone";
+const char *password = "123451234";
 //const char *ssid = "SlothSpeedNetwork";
 //const char *password = "0Point3MillimetersAnHour";
 
@@ -17,7 +17,7 @@ std::atomic<char> action{'0'};
 // SMA actuator configs
 const int NUM_ACT = 4;
 const int sma_pins[NUM_ACT] = {5, 16, 17, 18};  // w, a, s, d (up, left, down, right)
-const float sma_duty_cycles[NUM_ACT] = {100.0, 100.0, 100.0, 100.0};
+const float sma_duty_cycles[NUM_ACT] = {80.0, 80.0, 80.0, 80.0};
 const float sma_resistances[NUM_ACT] = {3.0, 3.0, 3.0, 3.0};
 const int act_time = 100; // in millisec
 const int cool_down_time = 5000; // in millisec
@@ -143,7 +143,7 @@ void trigger_actuator() {
     }
   } else {
       for (int i = 0; i < NUM_ACT; i++) {
-          int raw_duty_cycle_val = compute_duty_value(100.0, 3.1);
+          int raw_duty_cycle_val = compute_duty_value(100.0, 3.0);
           ledcWrite(sma_channels[i], raw_duty_cycle_val);
       }
       Serial.println("all");

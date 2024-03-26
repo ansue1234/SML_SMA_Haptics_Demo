@@ -8,7 +8,8 @@ import numpy as np
 import pyttsx3
 
 from client import Client
-ip = '192.168.43.176'
+# ip = '192.168.43.176'
+ip = '172.20.10.7'
 camera = 1
 
 model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
@@ -32,13 +33,15 @@ def get_object_stats(frame, df_result, class_name, object_center=None):
 
 def compute_plan(object_center, hand_center):
     if object_center is not None and hand_center is not None:
-        if np.linalg.norm(object_center - hand_center) <= 20:
+        if np.linalg.norm(object_center - hand_center) <= 30:
             return 'Matched'
-        elif np.abs(object_center[0] - hand_center[0]) < 20:
+        elif np.abs(object_center[0] - hand_center[0]) < 40:
             if object_center[1] > hand_center[1]:
                 return 'Move Down'
+                # return 'Move Up'
             else:
                 return 'Move Up'
+                # return 'Move Down'
         else:
             if object_center[0] > hand_center[0]:
                 return 'Move Right'
@@ -61,10 +64,12 @@ def display_plan(plan, object_name, hand_center, object_center):
     stage = object_name
     if plan == 'Move Up':
         icon = cv2.imread('../painting_alignment/up.png')
-        client.send_post('w')
+        # client.send_post('w')
+        client.send_post('s')
     elif plan == 'Move Down':
         icon = cv2.imread('../painting_alignment/down.png')
-        client.send_post('s')
+        # client.send_post('s')
+        client.send_post('w')
     elif plan == 'Move Left':
         icon = cv2.imread('../painting_alignment/left.png')
         client.send_post('a')
